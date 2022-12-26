@@ -1,0 +1,77 @@
+---
+version: "2.4"
+services:
+  prowlarr:
+    image: ghcr.io/linuxserver/prowlarr:develop
+    container_name: prowlarr-mediamgmt
+    environment:
+      - PUID=1032
+      - PGID=100
+      - TZ=America/Chicago
+    volumes:
+      - prowlarr:/config
+    ports:
+      - 9696:9696
+    restart: unless-stopped
+  
+  flaresolverr:
+    # DockerHub mirror flaresolverr/flaresolverr:latest
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr-mediamgmt
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+    ports:
+      - "${PORT:-8191}:8191"
+    restart: unless-stopped 
+ 
+
+  sonarr:
+    image: ghcr.io/linuxserver/sonarr
+    container_name: sonarr-mediamgmt
+    environment:
+      - PUID=1032
+      - PGID=100
+      - TZ=America/Chicago
+    volumes:
+      - sonarr:/config
+      - /mnt/Home_Data/Media:/tv
+      - /ssdpool/sftpsync_final:/downloads
+      - /mnt/downloads/NZBGet/completed/sonarr:/sonarr
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+
+  radarr:
+    image: ghcr.io/linuxserver/radarr
+    container_name: radarr-mediamgmt
+    environment:
+      - PUID=1032
+      - PGID=100
+      - TZ=America/Chicago
+    volumes:
+      - radarr:/config
+      - /mnt/Home_Data/Media:/movies
+      - /ssdpool/sftpsync_final:/downloads
+      - /mnt/downloads/NZBGet/completed/movies:/nzbget
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+
+volumes:
+  sonarr:
+    name: sonarr
+    driver: local-persist
+    driver_opts:
+      mountpoint: /ssdpool/docker/volumes/sonarr/_data  
+  radarr:
+    name: radarr
+    driver: local-persist
+    driver_opts:
+      mountpoint: /ssdpool/docker/volumes/radarr/_data
+  prowlarr:
+    name: prowlarr
+    driver: local-persist
+    driver_opts:
+      mountpoint: /ssdpool/docker/volumes/prowlarr/_data 
