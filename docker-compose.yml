@@ -73,7 +73,7 @@ services:
     restart: unless-stopped
     
   overseerr:
-    image: sctx/overseerr:latest
+    image: lscr.io/linuxserver/overseerr:latest
     container_name: overseerr
     environment:
       - LOG_LEVEL=debug
@@ -84,7 +84,7 @@ services:
     ports:
       - 5055:5055
     volumes:
-      - overseerr:/app/config
+      - overseerr:/config
     restart: unless-stopped
 
 volumes:
