@@ -71,13 +71,33 @@ services:
     ports:
       - 5076:5076
     restart: unless-stopped
+    
+  overseerr:
+    image: sctx/overseerr:latest
+    container_name: overseerr
+    environment:
+      - LOG_LEVEL=debug
+      - PUID=1032
+      - PGID=100
+      - TZ=America/Chicago
+      - PORT=5055 #optional
+    ports:
+      - 5055:5055
+    volumes:
+      - overseerr:/app/config
+    restart: unless-stopped
 
 volumes:
   sonarr:
     name: sonarr
     driver: local-persist
     driver_opts:
-      mountpoint: /ssdpool/docker/volumes/sonarr/_data  
+      mountpoint: /ssdpool/docker/volumes/sonarr/_data 
+  overseerr:
+    name: overseerr
+    driver: local-persist
+    driver_opts:
+      mountpoint: /ssdpool/docker/volumes/overseerr/_data 
   radarr:
     name: radarr
     driver: local-persist
