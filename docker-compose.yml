@@ -27,7 +27,7 @@ services:
     restart: unless-stopped 
  
   sonarr:
-    image: ghcr.io/linuxserver/sonarr
+    image: linuxserver/sonarr:latest
     container_name: sonarr-mediamgmt
     environment:
       - PUID=1032
