@@ -12,7 +12,7 @@ services:
       - prowlarr:/config
     ports:
       - 9696:9696
-    restart: unless-stopped
+    restart: always
   
   flaresolverr:
     # DockerHub mirror flaresolverr/flaresolverr:latest
@@ -24,7 +24,7 @@ services:
       - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
     ports:
       - "${PORT:-8191}:8191"
-    restart: unless-stopped 
+    restart: always 
  
   sonarr:
     image: linuxserver/sonarr:latest
@@ -35,12 +35,11 @@ services:
       - TZ=America/Chicago
     volumes:
       - sonarr:/config
-      - /mnt/Home_Data/Media:/tv
-      - /ssdpool/sftpsync_final:/downloads
-      - /mnt/downloads/NZBGet/completed/sonarr:/sonarr
+
+      - /mnt/Home_Data:/data
     ports:
       - 8989:8989
-    restart: unless-stopped
+    restart: always
 
   radarr:
     image: ghcr.io/linuxserver/radarr
@@ -51,41 +50,12 @@ services:
       - TZ=America/Chicago
     volumes:
       - radarr:/config
-      - /mnt/Home_Data/Media:/movies
-      - /ssdpool/sftpsync_final:/downloads
-      - /mnt/downloads/NZBGet/completed/movies:/nzbget
+      - /mnt/Home_Data:/data
     ports:
       - 7878:7878
-    restart: unless-stopped
+    restart: always
 
-  nzbhydra2:
-    image: lscr.io/linuxserver/nzbhydra2:latest
-    container_name: nzbhydra2
-    environment:
-      - PUID=1032
-      - PGID=100
-      - TZ=America/Chicago
-    volumes:
-      - nzbhydra2:/config
-      - /nzb/download:/downloads
-    ports:
-      - 5076:5076
-    restart: unless-stopped
-    
-  overseerr:
-    image: lscr.io/linuxserver/overseerr:latest
-    container_name: overseerr
-    environment:
-      - LOG_LEVEL=debug
-      - PUID=1032
-      - PGID=100
-      - TZ=America/Chicago
-      - PORT=5055 #optional
-    ports:
-      - 5055:5055
-    volumes:
-      - overseerr:/config
-    restart: unless-stopped
+
 
 volumes:
   sonarr:
@@ -93,11 +63,6 @@ volumes:
     driver: local-persist
     driver_opts:
       mountpoint: /ssdpool/docker/volumes/sonarr/_data 
-  overseerr:
-    name: overseerr
-    driver: local-persist
-    driver_opts:
-      mountpoint: /ssdpool/docker/volumes/overseerr/_data 
   radarr:
     name: radarr
     driver: local-persist
@@ -108,8 +73,4 @@ volumes:
     driver: local-persist
     driver_opts:
       mountpoint: /ssdpool/docker/volumes/prowlarr/_data   
-  nzbhydra2:
-    name: nzbhydra2
-    driver: local-persist
-    driver_opts:
-      mountpoint: /ssdpool/docker/volumes/nzbhydra2/_data 
+
