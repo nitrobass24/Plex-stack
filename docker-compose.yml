@@ -5,11 +5,11 @@ services:
     image: ghcr.io/linuxserver/prowlarr:develop
     container_name: prowlarr-mediamgmt
     environment:
-      - PUID=1032
-      - PGID=100
+      - PUID=568
+      - PGID=568
       - TZ=America/Chicago
     volumes:
-      - prowlarr:/config
+      - /mnt/ssdpool/docker/volumes/prowlarr/_data:/config
     ports:
       - 9696:9696
     restart: always
@@ -30,12 +30,12 @@ services:
     image: linuxserver/sonarr:latest
     container_name: sonarr-mediamgmt
     environment:
-      - PUID=1032
-      - PGID=100
+      - PUID=568
+      - PGID=568
       - TZ=America/Chicago
     volumes:
-      - sonarr:/config
-
+      - /mnt/ssdpool/docker/volumes/sonarr/_data:/config
+      - /mnt/pool/data:/truenasdata
       - /mnt/Home_Data:/data
     ports:
       - 8989:8989
@@ -45,11 +45,12 @@ services:
     image: ghcr.io/linuxserver/radarr
     container_name: radarr-mediamgmt
     environment:
-      - PUID=1032
-      - PGID=100
+      - PUID=568
+      - PGID=568
       - TZ=America/Chicago
     volumes:
-      - radarr:/config
+      - /mnt/ssdpool/docker/volumes/radarr/_data:/config
+      - /mnt/pool/data:/truenasdata
       - /mnt/Home_Data:/data
     ports:
       - 7878:7878
