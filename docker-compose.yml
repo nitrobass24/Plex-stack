@@ -1,9 +1,9 @@
 ---
-version: "2.4"
+version: "3.5"
 services:
   prowlarr:
     image: ghcr.io/linuxserver/prowlarr:develop
-    container_name: prowlarr-mediamgmt
+    container_name: prowlarr
     environment:
       - PUID=568
       - PGID=568
@@ -17,61 +17,88 @@ services:
   flaresolverr:
     # DockerHub mirror flaresolverr/flaresolverr:latest
     image: ghcr.io/flaresolverr/flaresolverr:latest
-    container_name: flaresolverr-mediamgmt
+    container_name: flaresolverr
     environment:
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - LOG_HTML=${LOG_HTML:-false}
       - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
     ports:
-      - "${PORT:-8191}:8191"
+      - 8191:8191
     restart: always 
  
   sonarr:
     image: linuxserver/sonarr:latest
-    container_name: sonarr-mediamgmt
+    container_name: sonarr
     environment:
       - PUID=568
       - PGID=568
       - TZ=America/Chicago
     volumes:
       - /mnt/ssdpool/docker/volumes/sonarr/_data:/config
-      - /mnt/pool/data:/truenasdata
-      - /mnt/Home_Data:/data
+      - /mnt/pool/data:/data
+      #- /mnt/Home_Data:/data
     ports:
       - 8989:8989
     restart: always
 
   radarr:
     image: ghcr.io/linuxserver/radarr
-    container_name: radarr-mediamgmt
+    container_name: radarr
     environment:
       - PUID=568
       - PGID=568
       - TZ=America/Chicago
     volumes:
       - /mnt/ssdpool/docker/volumes/radarr/_data:/config
-      - /mnt/pool/data:/truenasdata
-      - /mnt/Home_Data:/data
+      #- /mnt/pool/data:/truenasdata
+      - /mnt/pool/data:/data
     ports:
       - 7878:7878
     restart: always
 
+  nzbget:
+    image: lscr.io/linuxserver/nzbget:latest
+    container_name: nzbget
+    environment:
+      - PUID=568
+      - PGID=568
+      - TZ=America/Chicago
+    volumes:
+      - /mnt/ssdpool/docker/volumes/nzbget/_data:/config
+      - /mnt/pool/data/downloads:/downloads #optional
+    ports:
+      - 6789:6789
+    restart: unless-stopped
 
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    network_mode: host
+    environment:
+      - PUID=568
+      - PGID=568
+      - TZ=America/Chicago
+      - VERSION=latest
+      - PLEX_CLAIM=claim-Zs2Sx3gNxmC8KXVQHx72
 
-volumes:
-  sonarr:
-    name: sonarr
-    driver: local-persist
-    driver_opts:
-      mountpoint: /ssdpool/docker/volumes/sonarr/_data 
-  radarr:
-    name: radarr
-    driver: local-persist
-    driver_opts:
-      mountpoint: /ssdpool/docker/volumes/radarr/_data
-  prowlarr:
-    name: prowlarr
-    driver: local-persist
-    driver_opts:
-      mountpoint: /ssdpool/docker/volumes/prowlarr/_data   
+    volumes:
+      - /mnt/ssdpool/docker/volumes/plex/_data:/config
+      - /mnt/Home_Data/Media:/data
+      - /mnt/pool/data/Media:/data2
+    devices:
+      - /dev/dri:/dev/dri
+    restart: unless-stopped
 
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    restart: always
+    environment:
+      TZ: America/Detroit
+      WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_REMOVE_VOLUMES: "true"
+      WATCHTOWER_INCLUDE_STOPPED: "true"
+      WATCHTOWER_NO_STARTUP_MESSAGE: "false"
+      WATCHTOWER_SCHEDULE: 0 30 0 * * *
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
