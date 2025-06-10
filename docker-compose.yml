@@ -1,19 +1,25 @@
 ---
 version: "3.5"
 services:
-  prowlarr:
-    image: ghcr.io/linuxserver/prowlarr:develop
-    container_name: prowlarr
+  
+  autobrr:
+    container_name: autobrr
+    image: ghcr.io/autobrr/autobrr:latest
+    restart: unless-stopped
+    #logging:
+    #  driver: json-file
+    #  options:
+    #    max-file: ${DOCKERLOGGING_MAXFILE}
+    #    max-size: ${DOCKERLOGGING_MAXSIZE}
     environment:
       - PUID=568
       - PGID=568
       - TZ=America/Chicago
     volumes:
-      - /mnt/ssdpool/docker/volumes/prowlarr/_data:/config
+      - /mnt/ssdpool/docker/volumes/autobrr/_data:/config
     ports:
-      - 9696:9696
-    restart: always
-  
+      - 7474:7474
+      
   flaresolverr:
     # DockerHub mirror flaresolverr/flaresolverr:latest
     image: ghcr.io/flaresolverr/flaresolverr:latest
@@ -26,8 +32,22 @@ services:
       - 8191:8191
     restart: always 
  
+  whisparr:
+    container_name: whisparr
+    image: ghcr.io/hotio/whisparr
+    ports:
+      - "6969:6969"
+    environment:
+      - PUID=568
+      - PGID=568
+      - UMASK=002
+      - TZ=America/Chicago
+    volumes:
+      - /mnt/ssdpool/docker/volumes/whisparr/_data:/config
+      - /mnt/pool/data:/data
+      
   sonarr:
-    image: linuxserver/sonarr:latest
+    image: ghcr.io/hotio/sonarr
     container_name: sonarr
     environment:
       - PUID=568
@@ -36,13 +56,12 @@ services:
     volumes:
       - /mnt/ssdpool/docker/volumes/sonarr/_data:/config
       - /mnt/pool/data:/data
-      #- /mnt/Home_Data:/data
     ports:
       - 8989:8989
     restart: always
 
   radarr:
-    image: ghcr.io/linuxserver/radarr
+    image: ghcr.io/hotio/radarr
     container_name: radarr
     environment:
       - PUID=568
@@ -50,14 +69,13 @@ services:
       - TZ=America/Chicago
     volumes:
       - /mnt/ssdpool/docker/volumes/radarr/_data:/config
-      #- /mnt/pool/data:/truenasdata
       - /mnt/pool/data:/data
     ports:
       - 7878:7878
     restart: always
 
   nzbget:
-    image: lscr.io/linuxserver/nzbget:latest
+    image: ghcr.io/hotio/nzbget:latest
     container_name: nzbget
     environment:
       - PUID=568
@@ -83,7 +101,7 @@ services:
 
     volumes:
       - /mnt/ssdpool/docker/volumes/plex/_data:/config
-      - /mnt/Home_Data/Media:/data
+      - /tmp/transcode:/transcode
       - /mnt/pool/data/Media:/data2
     devices:
       - /dev/dri:/dev/dri
@@ -93,6 +111,7 @@ services:
     image: containrrr/watchtower
     container_name: watchtower
     restart: always
+    #stop_timeout: 30s
     environment:
       TZ: America/Detroit
       WATCHTOWER_CLEANUP: "true"
@@ -102,3 +121,5 @@ services:
       WATCHTOWER_SCHEDULE: 0 30 0 * * *
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+  
+ 
