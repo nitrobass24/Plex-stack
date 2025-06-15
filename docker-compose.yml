@@ -1,25 +1,19 @@
----
 version: "3.5"
 services:
-  
+
   autobrr:
     container_name: autobrr
     image: ghcr.io/autobrr/autobrr:latest
     restart: unless-stopped
-    #logging:
-    #  driver: json-file
-    #  options:
-    #    max-file: ${DOCKERLOGGING_MAXFILE}
-    #    max-size: ${DOCKERLOGGING_MAXSIZE}
     environment:
       - PUID=568
       - PGID=568
       - TZ=America/Chicago
     volumes:
-      - /mnt/ssdpool/docker/volumes/autobrr/_data:/config
+      - /mnt/nvmepool/docker/misc/autobrr:/config
     ports:
       - 7474:7474
-      
+
   prowlarr:
     image: ghcr.io/linuxserver/prowlarr:develop
     container_name: prowlarr
@@ -28,13 +22,12 @@ services:
       - PGID=568
       - TZ=America/Chicago
     volumes:
-      - /mnt/ssdpool/docker/volumes/prowlarr/_data:/config
+      - /mnt/nvmepool/docker/misc/prowlarr:/config
     ports:
       - 9696:9696
     restart: always
-    
+
   flaresolverr:
-    # DockerHub mirror flaresolverr/flaresolverr:latest
     image: ghcr.io/flaresolverr/flaresolverr:latest
     container_name: flaresolverr
     environment:
@@ -43,8 +36,8 @@ services:
       - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
     ports:
       - 8191:8191
-    restart: always 
- 
+    restart: always
+
   whisparr:
     container_name: whisparr
     image: ghcr.io/hotio/whisparr
@@ -56,9 +49,9 @@ services:
       - UMASK=002
       - TZ=America/Chicago
     volumes:
-      - /mnt/ssdpool/docker/volumes/whisparr/_data:/config
+      - /mnt/nvmepool/docker/misc/whisparr:/config
       - /mnt/pool/data:/data
-      
+
   sonarr:
     image: ghcr.io/hotio/sonarr
     container_name: sonarr
@@ -67,7 +60,7 @@ services:
       - PGID=568
       - TZ=America/Chicago
     volumes:
-      - /mnt/ssdpool/docker/volumes/sonarr/_data:/config
+      - /mnt/nvmepool/docker/sonarr:/config
       - /mnt/pool/data:/data
     ports:
       - 8989:8989
@@ -81,7 +74,7 @@ services:
       - PGID=568
       - TZ=America/Chicago
     volumes:
-      - /mnt/ssdpool/docker/volumes/radarr/_data:/config
+      - /mnt/nvmepool/docker/radarr:/config
       - /mnt/pool/data:/data
     ports:
       - 7878:7878
@@ -95,7 +88,7 @@ services:
       - PGID=568
       - TZ=America/Chicago
     volumes:
-      - /mnt/ssdpool/docker/volumes/nzbget/_data:/config
+      - /mnt/nvmepool/docker/misc/nzbget:/config
       - /mnt/pool/data/downloads:/downloads #optional
     ports:
       - 6789:6789
@@ -111,9 +104,8 @@ services:
       - TZ=America/Chicago
       - VERSION=latest
       - PLEX_CLAIM=claim-Zs2Sx3gNxmC8KXVQHx72
-
     volumes:
-      - /mnt/ssdpool/docker/volumes/plex/_data:/config
+      - /mnt/nvmepool/docker/plex:/config
       - /tmp/transcode:/transcode
       - /mnt/pool/data/Media:/data2
     devices:
@@ -124,7 +116,6 @@ services:
     image: containrrr/watchtower
     container_name: watchtower
     restart: always
-    #stop_timeout: 30s
     environment:
       TZ: America/Detroit
       WATCHTOWER_CLEANUP: "true"
@@ -134,5 +125,3 @@ services:
       WATCHTOWER_SCHEDULE: 0 30 0 * * *
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-  
- 
