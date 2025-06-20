@@ -11,7 +11,8 @@ services:
       - TZ=America/Chicago
     volumes:
       - /mnt/pool/docker/misc/autobrr:/config   # updated
-
+    ports:
+      - 7474:7474
   prowlarr:
     image: ghcr.io/linuxserver/prowlarr:develop
     container_name: prowlarr
