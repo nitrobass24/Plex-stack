@@ -10,9 +10,7 @@ services:
       - PGID=568
       - TZ=America/Chicago
     volumes:
-      - /mnt/nvmepool/docker/misc/autobrr:/config
-    ports:
-      - 7474:7474
+      - /mnt/pool/docker/misc/autobrr:/config   # updated
 
   prowlarr:
     image: ghcr.io/linuxserver/prowlarr:develop
@@ -22,7 +20,7 @@ services:
       - PGID=568
       - TZ=America/Chicago
     volumes:
-      - /mnt/nvmepool/docker/misc/prowlarr:/config
+      - /mnt/pool/docker/misc/prowlarr:/config  # updated
     ports:
       - 9696:9696
     restart: always
@@ -49,7 +47,7 @@ services:
       - UMASK=002
       - TZ=America/Chicago
     volumes:
-      - /mnt/nvmepool/docker/misc/whisparr:/config
+      - /mnt/pool/docker/misc/whisparr:/config  # updated
       - /mnt/pool/data:/data
 
   sonarr:
@@ -60,7 +58,7 @@ services:
       - PGID=568
       - TZ=America/Chicago
     volumes:
-      - /mnt/nvmepool/docker/sonarr:/config
+      - /mnt/pool/docker/sonarr:/config         # updated
       - /mnt/pool/data:/data
     ports:
       - 8989:8989
@@ -74,7 +72,7 @@ services:
       - PGID=568
       - TZ=America/Chicago
     volumes:
-      - /mnt/nvmepool/docker/radarr:/config
+      - /mnt/pool/docker/radarr:/config         # updated
       - /mnt/pool/data:/data
     ports:
       - 7878:7878
@@ -88,8 +86,8 @@ services:
       - PGID=568
       - TZ=America/Chicago
     volumes:
-      - /mnt/nvmepool/docker/misc/nzbget:/config
-      - /mnt/pool/data/downloads:/downloads #optional
+      - /mnt/pool/docker/misc/nzbget:/config    # updated
+      - /mnt/pool/data/downloads:/downloads
     ports:
       - 6789:6789
     restart: unless-stopped
@@ -105,7 +103,7 @@ services:
       - VERSION=latest
       - PLEX_CLAIM=claim-Zs2Sx3gNxmC8KXVQHx72
     volumes:
-      - /mnt/nvmepool/docker/plex:/config
+      - /mnt/pool/docker/plex:/config           # updated
       - /tmp/transcode:/transcode
       - /mnt/pool/data/Media:/data2
     devices:
