@@ -1,22 +1,66 @@
-version: "3.5"
+version: '3.8'
+
 services:
-  storjnode:
+  storagenode:
     image: storjlabs/storagenode:latest
-    container_name: storj
+    container_name: storj-home
     ports:
-      - "28967:28967/tcp"
-      - "28967:28967/udp"
-      - "14002:14002"
+      - 14002:14002/tcp
+      - 28967:28967/tcp
+      - 28967:28967/udp
     volumes:
       - type: bind
-        source: /mnt/ssdpool/stephen/.local/share/storj/identity/storagenode/
+        source: /mnt/pool/storj/dbs/storj-home
+        target: /app/dbs
+      - type: bind
+        source: /mnt/pool/storj/filestatcache/storj-home
+        target: /app/config/storage/filestatcache
+      - type: bind
+        source: /mnt/pool/stephen/.local/share/storj/identity/storagenode
         target: /app/identity
       - type: bind
         source: /mnt/pool/storj/data
         target: /app/config
     environment:
-      - WALLET=
-      - EMAIL=
       - ADDRESS=68.248.211.162:28967
-      - STORAGE="41TB"    
+      - STORAGE="60TB"
+      - WALLET=0x3b69F35FB779aC0724b9d7d254CA976a52439aF3
+      - EMAIL=stephendavis24@gmail.com
+
+    command:
+      - --pieces.enable-lazy-filewalker=false
+      - --pieces.file-stat-cache=badger
+      - --storage2.piece-scan-on-startup=true
+    restart: always
+
+  storagenode-redbox:
+    image: storjlabs/storagenode:latest
+    container_name: storj-redbox
+    ports:
+      - 14003:14002/tcp
+      - 28968:28967/tcp
+      - 28968:28967/udp
+    volumes:
+      - type: bind
+        source: /mnt/pool/storj/dbs/storj-redbox
+        target: /app/dbs
+      - type: bind
+        source: /mnt/pool/storj/filestatcache/storj-redbox
+        target: /app/config/storage/filestatcache
+      - type: bind
+        source: /mnt/pool/stephen/.local/share/storj/identity/storj-redbox
+        target: /app/identity
+      - type: bind
+        source: /mnt/pool/storj-redbox/data
+        target: /app/config
+    environment:
+      - WALLET=0x3b69F35FB779aC0724b9d7d254CA976a52439aF3
+      - EMAIL=stephendavis24@gmail.com
+      - ADDRESS=66.68.120.2:28968
+      - STORAGE=10TB
+    command:
+      - --pieces.enable-lazy-filewalker=false
+      - --pieces.file-stat-cache=badger
+      - --storage2.piece-scan-on-startup=true
+      - --storage2.database-dir=dbs
     restart: always
