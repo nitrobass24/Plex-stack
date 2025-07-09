@@ -4,16 +4,18 @@ services:
   storagenode:
     image: storjlabs/storagenode:latest
     container_name: storj-home
+    mem_limit: 2g
+    mem_reservation: 512m
     ports:
       - 14002:14002/tcp
       - 28967:28967/tcp
       - 28967:28967/udp
     volumes:
       - type: bind
-        source: /mnt/pool/storj/dbs/storj-home
+        source: /mnt/nvmepool/storj-home/dbs/
         target: /app/dbs
       - type: bind
-        source: /mnt/pool/storj/filestatcache/storj-home
+        source: /mnt/nvmepool/storj-home/filestatcache/
         target: /app/config/storage/filestatcache
       - type: bind
         source: /mnt/pool/stephen/.local/share/storj/identity/storagenode
@@ -23,10 +25,9 @@ services:
         target: /app/config
     environment:
       - ADDRESS=68.248.211.162:28967
-      - STORAGE="60TB"
+      - STORAGE=60TB
       - WALLET=0x3b69F35FB779aC0724b9d7d254CA976a52439aF3
       - EMAIL=stephendavis24@gmail.com
-
     command:
       - --pieces.enable-lazy-filewalker=false
       - --pieces.file-stat-cache=badger
@@ -36,16 +37,18 @@ services:
   storagenode-redbox:
     image: storjlabs/storagenode:latest
     container_name: storj-redbox
+    mem_limit: 2g
+    mem_reservation: 512m
     ports:
       - 14003:14002/tcp
       - 28968:28967/tcp
       - 28968:28967/udp
     volumes:
       - type: bind
-        source: /mnt/pool/storj/dbs/storj-redbox
+        source: /mnt/nvmepool/storj-redbox/dbs
         target: /app/dbs
       - type: bind
-        source: /mnt/pool/storj/filestatcache/storj-redbox
+        source: /mnt/nvmepool/storj-redbox/filestatcache/
         target: /app/config/storage/filestatcache
       - type: bind
         source: /mnt/pool/stephen/.local/share/storj/identity/storj-redbox
