@@ -5,41 +5,50 @@ services:
     container_name: autobrr
     image: ghcr.io/autobrr/autobrr:latest
     restart: unless-stopped
+    mem_limit: 1g
+    mem_reservation: 256m
     environment:
       - PUID=568
       - PGID=568
       - TZ=America/Chicago
     volumes:
-      - /mnt/pool/docker/misc/autobrr:/config   # updated
+      - /mnt/nvmepool/docker/misc/autobrr:/config
     ports:
       - 7474:7474
+
   prowlarr:
     image: ghcr.io/linuxserver/prowlarr:develop
     container_name: prowlarr
+    restart: always
+    mem_limit: 1g
+    mem_reservation: 256m
     environment:
       - PUID=568
       - PGID=568
       - TZ=America/Chicago
     volumes:
-      - /mnt/pool/docker/misc/prowlarr:/config  # updated
+      - /mnt/nvmepool/docker/misc/prowlarr:/config
     ports:
       - 9696:9696
-    restart: always
 
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr:latest
     container_name: flaresolverr
+    restart: always
+    mem_limit: 1g
+    mem_reservation: 256m
     environment:
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - LOG_HTML=${LOG_HTML:-false}
       - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
     ports:
       - 8191:8191
-    restart: always
 
   whisparr:
     container_name: whisparr
     image: ghcr.io/hotio/whisparr
+    mem_limit: 1g
+    mem_reservation: 256m
     ports:
       - "6969:6969"
     environment:
@@ -48,55 +57,62 @@ services:
       - UMASK=002
       - TZ=America/Chicago
     volumes:
-      - /mnt/pool/docker/misc/whisparr:/config  # updated
+      - /mnt/nvmepool/docker/misc/whisparr:/config
       - /mnt/pool/data:/data
 
   sonarr:
     image: ghcr.io/hotio/sonarr
     container_name: sonarr
+    restart: always
+    mem_limit: 1g
+    mem_reservation: 256m
     environment:
       - PUID=568
       - PGID=568
       - TZ=America/Chicago
     volumes:
-      - /mnt/pool/docker/sonarr:/config         # updated
+      - /mnt/nvmepool/docker/sonarr:/config
       - /mnt/pool/data:/data
     ports:
       - 8989:8989
-    restart: always
 
   radarr:
     image: ghcr.io/hotio/radarr
     container_name: radarr
+    restart: always
+    mem_limit: 1g
+    mem_reservation: 256m
     environment:
       - PUID=568
       - PGID=568
       - TZ=America/Chicago
     volumes:
-      - /mnt/pool/docker/radarr:/config         # updated
+      - /mnt/nvmepool/docker/radarr:/config
       - /mnt/pool/data:/data
     ports:
       - 7878:7878
-    restart: always
 
   nzbget:
     image: ghcr.io/hotio/nzbget:latest
     container_name: nzbget
+    restart: unless-stopped
+    mem_limit: 1g
+    mem_reservation: 256m
     environment:
       - PUID=568
       - PGID=568
       - TZ=America/Chicago
     volumes:
-      - /mnt/pool/docker/misc/nzbget:/config    # updated
+      - /mnt/nvmepool/docker/misc/nzbget:/config
       - /mnt/pool/data/downloads:/downloads
     ports:
       - 6789:6789
-    restart: unless-stopped
 
   plex:
     image: lscr.io/linuxserver/plex:latest
     container_name: plex
-    network_mode: host
+    restart: unless-stopped
+    mem_limit: 8g
     environment:
       - PUID=568
       - PGID=568
@@ -104,17 +120,19 @@ services:
       - VERSION=latest
       - PLEX_CLAIM=claim-Zs2Sx3gNxmC8KXVQHx72
     volumes:
-      - /mnt/pool/docker/plex:/config           # updated
+      - /mnt/nvmepool/docker/plex:/config
       - /tmp/transcode:/transcode
       - /mnt/pool/data/Media:/data2
     devices:
       - /dev/dri:/dev/dri
-    restart: unless-stopped
+    network_mode: host
 
   watchtower:
     image: containrrr/watchtower
     container_name: watchtower
     restart: always
+    mem_limit: 1g
+    mem_reservation: 256m
     environment:
       TZ: America/Detroit
       WATCHTOWER_CLEANUP: "true"
